@@ -10,9 +10,11 @@ with Browser() as browser:
     browser.visit(url)
 
     table = browser.find_by_css('table.yr-table-hourly')[0]
-    table1 = table.find_by_css('tbody')
-    for number in range(17):
-        row = table1.find_by_css('tr')[number] #prvni radek
+    table_body = table.find_by_css('tbody')
+    number_of_time = len(table_body.find_by_css('tr'))
+
+    for number in range(number_of_time):
+        row = table_body.find_by_css('tr')[number] #prvni radek
 
         temperature = row.find_by_css('td')[2].text #teplota
         rain = row.find_by_css('td')[3].text #srazky v mm
