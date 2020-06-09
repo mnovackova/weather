@@ -1,5 +1,5 @@
 from splinter import Browser
-import time
+from time import sleep
 
 
 yr = {}
@@ -26,21 +26,31 @@ with Browser() as browser:
 
 accu = {}
 
-with Browser() as browser:
+with Browser(driver_name='chrome') as browser:
     # Visit URL
     url = "https://www.accuweather.com/cs/cz/třebíč/126627/hourly-weather-forecast/126627"
     browser.visit(url)
 
-    time.sleep(15)
-    number_of_date = len(browser.find_by_css('.date'))
+    sleep(2)
+    cards = browser.find_by_css('.hourly-forecast-card')
 
-    for number in range(number_of_date):
-        time = browser.find_by_css('.date')[number].text.split()[0] #cas
-        temperature = browser.find_by_css('.temp')[number].text #teplota
-        rain = browser.find_by_css('.precip')[number].text.split()[-2] #srazky v %
+
+    for row in cards:
+        time = row.find_by_css('.date').text #cas
+
+        while not time: # kontroluje jestli je cas obsaze a pripadne scroluje
+            browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            sleep(1)
+            time = row.find_by_css('.date').text #cas
+
+        time_update = time.split()[0]
+        temperature = row.find_by_css('.temp').text #teplota
+        rain = row.find_by_css('.precip').text.split()[-2] #srazky v %
 
         data =  {"temperature": temperature, "rain": rain}
-        accu.update({time : data})
+        accu.update({time_update : data})
 
     import pdb; pdb.set_trace()
+
+
 
