@@ -1,7 +1,6 @@
 from splinter import Browser
-from time import sleep
 
-
+'''
 yr = {}
 
 with Browser() as browser:
@@ -22,7 +21,7 @@ with Browser() as browser:
 
         time = row.find_by_css('td strong')[0].text #cas
         yr.update({time : data})
-
+'''
 
 accu = {}
 
@@ -31,16 +30,15 @@ with Browser(driver_name='chrome') as browser:
     url = "https://www.accuweather.com/cs/cz/třebíč/126627/hourly-weather-forecast/126627"
     browser.visit(url)
 
-    sleep(2)
-    cards = browser.find_by_css('.hourly-forecast-card')
+
+    cards = browser.find_by_css('.hourly-forecast-card', wait_time=5)
 
 
     for row in cards:
         time = row.find_by_css('.date').text #cas
 
         while not time: # kontroluje jestli je cas obsaze a pripadne scroluje
-            browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(1)
+            row.scroll_to()
             time = row.find_by_css('.date').text #cas
 
         time_update = time.split()[0]
@@ -50,7 +48,8 @@ with Browser(driver_name='chrome') as browser:
         data =  {"temperature": temperature, "rain": rain}
         accu.update({time_update : data})
 
-    import pdb; pdb.set_trace()
+#import pdb; pdb.set_trace()
+
 
 
 
